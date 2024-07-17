@@ -1,0 +1,79 @@
+installation fro authentication
+
+->pip install python-multipart // for json 
+->pip install python-jose[crytography]
+-> pip install passlib[bcrypt] //password hassing
+
+
+
+****** OAuth2PasswordBearer is a class provided by FastAPI in the fastapi.security module.
+It is used to implement the OAuth2 password flow, which is a common authentication mechanism for APIs.
+The tokenUrl parameter specifies the URL where the client can obtain the OAuth2 token. In this case, it is set to "token".
+This means that the client will send a request to the /token endpoint to get an access token.
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+-----------------------------------------------------------------------------------------------------------------------------
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+Function Definition:
+
+def get_user(db, username: str): This defines a function named get_user that takes two parameters:
+db: This is expected to be a dictionary representing the database.
+username: This is a string representing the username to look up in the database.
+Check if Username Exists:
+
+if username in db: This checks if the given username exists as a key in the db dictionary. If the username is not found in the dictionary, the function will do nothing (i.e., it implicitly returns None).
+Retrieve User Data:
+
+user_dict = db[username]: If the username exists in the database, this line retrieves the dictionary associated with the username from the db dictionary and assigns it to user_dict.
+Create and Return a UserInDB Object:
+
+return UserInDB(**user_dict): This line creates an instance of the UserInDB class using the data in user_dict. The **user_dict syntax unpacks the dictionary and passes its key-value pairs as arguments to the UserInDB class constructor.
+For example, if user_dict is {"username": "tim", "full_name": "Tim Russica", "email": "tim@gmail.com", "hashed_password": "", "disabled": False}, then UserInDB(**user_dict) is equivalent to UserInDB(username="tim", full_name="Tim Russica", email="tim@gmail.com", hashed_password="", disabled=False).
+
+---------------------------------------------------------------------------------------------------------------
+
+Let's break down the create_access_token function line by line to understand its purpose and how it works:
+
+
+
+def create_access_token(data: dict, expires_delta: timedelta = None):
+Function Definition:
+create_access_token is a function that takes two parameters:
+data: A dictionary (data: dict) containing the data to be encoded into the JWT.
+expires_delta: An optional parameter (expires_delta: timedelta = None) that specifies the duration after which the token will expire. If not provided, it defaults to None.
+
+
+    to_encode = data.copy()
+Copying Data:
+The input data dictionary is copied to a new dictionary to_encode. This ensures that the original data is not modified.
+
+
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+Setting Expiration Time:
+The function checks if expires_delta is provided:
+If expires_delta is provided (if expires_delta:), the expiration time expire is set to the current UTC time (datetime.now(timezone.utc)) plus the expires_delta.
+If expires_delta is not provided (else:), the expiration time expire is set to the current UTC time plus 15 minutes (timedelta(minutes=15)).
+
+
+    to_encode.update({"exp": expire})
+Updating the Data to Encode:
+The expiration time (expire) is added to the to_encode dictionary with the key "exp". This is required for JWTs to specify the expiration time.
+
+
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+Encoding the JWT:
+The to_encode dictionary, now containing the expiration time, is encoded into a JWT using the jwt.encode method.
+SECRET_KEY is used as the secret key to sign the JWT, ensuring that it can be verified later.
+ALGORITHM specifies the algorithm used for encoding the JWT (e.g., "HS256").
+
+-------------------------------------------------------------------------------------------------------------------
+
+
