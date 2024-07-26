@@ -75,5 +75,7 @@ SECRET_KEY is used as the secret key to sign the JWT, ensuring that it can be ve
 ALGORITHM specifies the algorithm used for encoding the JWT (e.g., "HS256").
 
 -------------------------------------------------------------------------------------------------------------------
-
+return UserSchema(**updated_user)
+The updated_user dictionary is dynamically created based on the updated fields. Using unpacking (**updated_user) allows you to pass all key-value pairs in the dictionary as keyword arguments to the UserSchema constructor without having to explicitly list each argument.
+return UserSchema(id=updated_user["id"], name=updated_user["name"], age=updated_user["age"], ...)
 
